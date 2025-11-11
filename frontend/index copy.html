@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Report Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #0078D4;
+      --primary-dark: #106EBE;
+      --secondary: #6c757d;
+      --success: #28a745;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --border: #dee2e6;
+      --shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left h1 {
+      color: var(--primary);
+      margin-bottom: 5px;
+      font-size: 28px;
+    }
+
+    .header-left p {
+      color: var(--secondary);
+      font-size: 16px;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-size: 24px;
+    }
+
+    .stat-icon.patients { background: rgba(0, 120, 212, 0.1); color: var(--primary); }
+    .stat-icon.diagnosis { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+    .stat-icon.doctors { background: rgba(255, 193, 7, 0.1); color: var(--warning); }
+    .stat-icon.active { background: rgba(220, 53, 69, 0.1); color: var(--danger); }
+
+    .stat-info h3 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .stat-info p {
+      color: var(--secondary);
+      font-size: 14px;
+    }
+
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .table-header h2 {
+      color: var(--primary);
+      font-size: 22px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      padding: 10px 15px 10px 40px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 250px;
+      font-size: 14px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--secondary);
+    }
+
+    .patient-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .patient-table thead {
+      background: var(--primary);
+      color: white;
+    }
+
+    .patient-table th {
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .patient-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s ease;
+    }
+
+    .patient-table tbody tr:hover {
+      background: rgba(0, 120, 212, 0.05);
+    }
+
+    .patient-table td {
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-admitted { background: rgba(220, 53, 69, 0.1); color: var(--danger); }
+    .status-discharged { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+
+    .charts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-card h3 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .chart-container {
+      height: 200px;
+      position: relative;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--secondary);
+    }
+
+    .loading i {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .stats-container {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .search-box input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <div class="header-left">
+        <h1><i class="fas fa-heartbeat"></i> Patient Report Dashboard</h1>
+        <p>Comprehensive overview of patient records and diagnostics</p>
+      </div>
+      <div class="header-right">
+        <button id="refreshBtn" class="btn-primary"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon patients">
+          <i class="fas fa-user-injured"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="totalPatients">0</h3>
+          <p>Total Patients</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon diagnosis">
+          <i class="fas fa-stethoscope"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="totalDiagnosis">0</h3>
+          <p>Diagnosis Records</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon doctors">
+          <i class="fas fa-user-md"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="uniqueDoctors">0</h3>
+          <p>Unique Doctors</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon active">
+          <i class="fas fa-procedures"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="activePatients">0</h3>
+          <p>Currently Admitted</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+      <div class="table-container">
+        <div class="table-header">
+          <h2><i class="fas fa-table"></i> Patient Records</h2>
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search patients...">
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="patient-table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Age/Gender</th>
+                <th>IP No</th>
+                <th>UMR No</th>
+                <th>Doctor</th>
+                <th>Admission</th>
+                <th>Discharge</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="patientTable">
+              <tr>
+                <td colspan="9" class="loading">
+                  <i class="fas fa-spinner fa-spin"></i><br>
+                  Loading patient data...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="charts-container">
+        <div class="chart-card">
+          <h3><i class="fas fa-chart-pie"></i> Patient Status</h3>
+          <div class="chart-container">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3><i class="fas fa-chart-bar"></i> Admissions by Month</h3>
+          <div class="chart-container">
+            <canvas id="admissionsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allPatients = [];
+    let allDiagnosis = [];
+
+    async function loadData() {
+      try {
+        showLoading();
+        
+        const [patientsResponse, diagnosisResponse] = await Promise.all([
+          fetch("/patients"),
+          fetch("/diagnosis")
+        ]);
+
+        if (!patientsResponse.ok || !diagnosisResponse.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        allPatients = await patientsResponse.json();
+        allDiagnosis = await diagnosisResponse.json();
+
+        updateStats();
+        renderPatientTable(allPatients);
+        initializeCharts();
+        
+      } catch (error) {
+        console.error('Error loading data:', error);
+        document.getElementById('patientTable').innerHTML = `
+          <tr>
+            <td colspan="9" class="loading" style="color: var(--danger);">
+              <i class="fas fa-exclamation-triangle"></i><br>
+              Failed to load data. Please try again.
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function showLoading() {
+      document.getElementById('patientTable').innerHTML = `
+        <tr>
+          <td colspan="9" class="loading">
+            <i class="fas fa-spinner fa-spin"></i><br>
+            Loading patient data...
+          </td>
+        </tr>
+      `;
+    }
+
+    function updateStats() {
+      document.getElementById('totalPatients').textContent = allPatients.length;
+      document.getElementById('totalDiagnosis').textContent = allDiagnosis.length;
+      
+      const uniqueDoctors = new Set(allPatients.map(p => p['Doctor Name']).filter(Boolean));
+      document.getElementById('uniqueDoctors').textContent = uniqueDoctors.size;
+      
+      const activePatients = allPatients.filter(p => p['Discharge Date'] === '' || !p['Discharge Date']).length;
+      document.getElementById('activePatients').textContent = activePatients;
+    }
+
+    function renderPatientTable(patients) {
+      const table = document.getElementById("patientTable");
+      
+      if (patients.length === 0) {
+        table.innerHTML = `
+          <tr>
+            <td colspan="9" class="loading">
+              <i class="fas fa-info-circle"></i><br>
+              No patient records found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      table.innerHTML = patients.map((p, i) => {
+        const isAdmitted = !p['Discharge Date'] || p['Discharge Date'] === '';
+        const statusClass = isAdmitted ? 'status-admitted' : 'status-discharged';
+        const statusText = isAdmitted ? 'Admitted' : 'Discharged';
+        
+        return `
+          <tr>
+            <td><strong>${p["Patient Name"] || "N/A"}</strong></td>
+            <td>${p["Age/Gender"] || "N/A"}</td>
+            <td>${p["IP No"] || "N/A"}</td>
+            <td>${p["UMR No"] || "N/A"}</td>
+            <td>${p["Doctor Name"] || "N/A"}</td>
+            <td>${formatDate(p["Admission Date"])}</td>
+            <td>${formatDate(p["Discharge Date"])}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>
+              <button class="btn-view" onclick="viewPatient(${i})" title="View Details">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      return new Date(dateString).toLocaleDateString();
+    }
+
+    function initializeCharts() {
+      // Status Chart
+      const admitted = allPatients.filter(p => !p['Discharge Date'] || p['Discharge Date'] === '').length;
+      const discharged = allPatients.length - admitted;
+      
+      const statusCtx = document.getElementById('statusChart').getContext('2d');
+      new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Admitted', 'Discharged'],
+          datasets: [{
+            data: [admitted, discharged],
+            backgroundColor: ['#dc3545', '#28a745'],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+
+      // Admissions Chart (sample data - you can replace with actual monthly data)
+      const admissionsCtx = document.getElementById('admissionsChart').getContext('2d');
+      new Chart(admissionsCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Admissions',
+            data: [12, 19, 15, 8, 12, 17],
+            backgroundColor: '#0078D4'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function viewPatient(index) {
+      const patient = allPatients[index];
+      alert(`Patient Details:\n\nName: ${patient['Patient Name']}\nIP No: ${patient['IP No']}\nDoctor: ${patient['Doctor Name']}\nStatus: ${!patient['Discharge Date'] ? 'Admitted' : 'Discharged'}`);
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredPatients = allPatients.filter(p => 
+        (p['Patient Name'] && p['Patient Name'].toLowerCase().includes(searchTerm)) ||
+        (p['IP No'] && p['IP No'].toLowerCase().includes(searchTerm)) ||
+        (p['Doctor Name'] && p['Doctor Name'].toLowerCase().includes(searchTerm))
+      );
+      renderPatientTable(filteredPatients);
+    });
+
+    // Refresh button
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+
+    // Initialize dashboard
+    window.onload = loadData;
+  </script>
+</body>
+</html>

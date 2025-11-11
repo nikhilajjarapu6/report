@@ -1,0 +1,56 @@
+[
+    {
+        "IMMUNOSUPPRESSANTS":[
+            "TAB. TACROTEC 2MG 8AM - 8PM",
+            "TAB. MYFORTIC 180MG 9AM- 9PM",
+            "TAB. WYSOLONE 5MG 9AM"
+        ],
+        "RESPIRATORY DRUGS":[
+            "NEB. LEVOLIN 0.63 MG 7AM-1PM-7PM (30MINS BEFORE TOBAMIST)",
+            "NEB TOBAMIST 300MG 7.30AM-7.30PM",
+            "NEB. MUCOMIX 200MG 8AM-1PM-8PM",
+            "NEB NACL 0.9% 8.30AM-2PM-9PM"
+        ],
+        "CARDIAC DRUGS":[
+            "TAB.ELIQUIS 5MG 9AM-9PM",
+            "TAB DYTOR 5MG 10AM(MON & THURS)",
+            "TAB CILACAR 5MG 9AM-9PM",
+            "TAB MET XL 25MG 9AM-9PM (WITHOLD IF SBP<100mmHg)"
+        ],
+        "ANTI INFECTIVE PROPHYLAXIS":[
+            "TAB.CEPODEM XP 325MG 9AM-9PM X 1 WEEK",
+            "TAB DOXY LB 1 TAB 9AM-9PM X 1 WEEK",
+            "TAB. BACTRIM DS 1TAB 2PM (MON - WED - FRI)",
+            "TAB. V GAVIR 450MG 2PM",
+            "TAB.VORIMED 200MG 2PM"
+        ],
+        "GI DRUGS":[
+            "TAB. PAN 40MG 6AM(B\/F)-6PM (B\/F)",
+            "CAP PYLOFLUSH 100MG 9AM-9PM X 10 DAYS",
+            "TAB. GANATON 50MG 9AM-2PM-9PM",
+            "TAB COLOSPA 135MG 9AM-9PM",
+            "SYP LOOZ 15ML 9PM",
+            "SYP RANIDOM O 15ML 9AM-1PM-9PM",
+            "SYP SUCRAFIL O 15ML 9AM-1PM-9PM"
+        ],
+        "SUPPLEMENTS":[
+            "TAB. A TO Z 1 TAB 2PM",
+            "TAB. SHELCAL - HD 500MG 2PM",
+            "TAB. MAGVION 400MG 9AM-9PM",
+            "TAB. ASTHOQUE 1TAB 9AM-9PM",
+            "TAB.TAYO 60K 2PM (WEEKLY ONCE)",
+            "TAB. IBANDRONATE 15OMG AT 6AM (E\/S) ONCE A MONTH with 1 glass water, sit upright for 1"
+        ],
+        "OTHERS":[
+            "TAB. DOLO 650MG SOS FOR PAIN",
+            "TAB URIBID 200MG 9AM-1PM-9PM",
+            "TAB URIMAX 0.4MG 9PM",
+            "TAB PYRIDIUM 200MG 9AM-9PM",
+            "TAB VASFREE 1 TAB 9AM-9PM",
+            "TAB MELATONIN 3MG 6PM",
+            "TAB ALPRAX 0.25MG 9PM",
+            "INJ AMINOVEN 250ML OVER 6 HOURS",
+            "INJ ALBUMIN 10ML\/ HOUR X 5 DAYS"
+        ]
+    }
+]

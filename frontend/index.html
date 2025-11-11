@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Report Dashboard</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f4f6;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #2c3e50;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    section {
+      background: #fff;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #333;
+      border-left: 4px solid #16a085;
+      padding-left: 10px;
+      margin-bottom: 15px;
+    }
+
+    .sub-header {
+      background: #16a085;
+      color: white;
+      padding: 12px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 6px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .sub-header:hover {
+      background: #138a72;
+    }
+
+    .sub-content {
+      display: none;
+      margin-top: 10px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .sub-header.active + .sub-content {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    .loading, .no-data {
+      text-align: center;
+      color: #777;
+      font-style: italic;
+      padding: 10px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      color: #666;
+      font-size: 14px;
+      margin-top: 30px;
+    }
+
+    .arrow {
+      transition: transform 0.3s ease;
+    }
+
+    .rotate {
+      transform: rotate(90deg);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>🩺 Patient Report Dashboard</header>
+
+  <!-- Patient Details -->
+  <section id="patientSection">
+    <h2>Patient Details</h2>
+    <p id="patientLoading" class="loading">Loading patient details...</p>
+    <p id="noPatientData" class="no-data" style="display:none;">No patient data available.</p>
+    <table id="patientTable" style="display: none;">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Age/Gender</th>
+          <th>IP No</th>
+          <th>UMR No</th>
+          <th>Doctor</th>
+          <th>Admission</th>
+          <th>Discharge</th>
+          <th>Mobile No</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Diagnosis & Treatment -->
+  <section>
+    <h2>Diagnosis & Treatment</h2>
+
+    <!-- Diagnosis & Chief Complaints -->
+    <div class="sub-header" onclick="toggleSubSection(this)">
+      <span>Diagnosis & Chief Complaints</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="sub-content" id="diagnosisComplaintsSection">
+      <p id="diagCompLoading" class="loading">Loading...</p>
+      <p id="noDiagCompData" class="no-data" style="display:none;">No diagnosis or complaints data available.</p>
+      <table id="diagCompTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Diagnosis</th>
+            <th>Chief Complaints</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Past & Present History -->
+    <div class="sub-header" onclick="toggleSubSection(this)">
+      <span>Past & Present History</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="sub-content" id="historySection">
+      <p id="historyLoading" class="loading">Loading...</p>
+      <p id="noHistoryData" class="no-data" style="display:none;">No history data available.</p>
+      <table id="historyTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Present History</th>
+            <th>Past History</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Treatment -->
+    <div class="sub-header" onclick="toggleSubSection(this)">
+      <span>Treatment Details</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="sub-content" id="treatmentSection">
+      <p id="treatmentLoading" class="loading">Loading treatment data...</p>
+      <p id="noTreatmentData" class="no-data" style="display:none;">No treatment data available.</p>
+      <ul id="treatmentList" style="display:none;"></ul>
+    </div>
+
+        <!-- Condition at Discharge -->
+    <div class="sub-header" onclick="toggleSubSection(this)">
+      <span>Condition at Discharge</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="sub-content" id="dischargeSection">
+      <p id="dischargeLoading" class="loading">Loading discharge data...</p>
+      <p id="noDischargeData" class="no-data" style="display:none;">No discharge condition data available.</p>
+      <ul id="dischargeList" style="display:none;"></ul>
+    </div>
+
+    <!-- medication -->
+    <div class="sub-header" onclick="toggleSubSection(this)">
+      <span>Medication</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="sub-content" id="medicationSection">
+      <p id="medicationLoading" class="loading">Loading medication data...</p>
+      <p id="noMedicationData" class="no-data" style="display:none;">No medication data available.</p>
+      <div id="medicationContainer" style="display:none;"></div>
+    </div>
+
+
+  </section>
+
+  <footer>© 2025 Patient Analysis System</footer>
+
+  <script>
+  function toggleSubSection(header) {
+    const content = header.nextElementSibling;
+    const arrow = header.querySelector('.arrow');
+    const isActive = header.classList.toggle('active');
+
+    if (isActive) {
+      content.style.display = 'block';
+      arrow.classList.add('rotate');
+    } else {
+      content.style.display = 'none';
+      arrow.classList.remove('rotate');
+    }
+  }
+
+  async function loadData() {
+    // =============================
+    // 1️⃣ PATIENT DATA
+    // =============================
+    const patientRes = await fetch("http://127.0.0.1:8000/patients");
+    const patients = await patientRes.json();
+
+    const patientTable = document.getElementById("patientTable");
+    const patientBody = patientTable.querySelector("tbody");
+    const patientLoading = document.getElementById("patientLoading");
+    const noPatientData = document.getElementById("noPatientData");
+
+    if (patients && patients.length > 0) {
+      patientLoading.style.display = "none";
+      patientTable.style.display = "table";
+      patients.forEach(p => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${p["Patient Name"] || ""}</td>
+          <td>${p["Age/Gender"] || ""}</td>
+          <td>${p["IP No"] || ""}</td>
+          <td>${p["UMR No"] || ""}</td>
+          <td>${p["Doctor Name"] || ""}</td>
+          <td>${p["Admission Date"] || ""}</td>
+          <td>${p["Discharge Date"] || ""}</td>
+          <td>${p["Mobile No"] || ""}</td>
+          <td>${p["Address"] || ""}</td>
+        `;
+        patientBody.appendChild(row);
+      });
+    } else {
+      patientLoading.style.display = "none";
+      noPatientData.style.display = "block";
+    }
+
+    // =============================
+    // 2️⃣ DIAGNOSIS & TREATMENT DATA
+    // =============================
+    const diagRes = await fetch("http://127.0.0.1:8000/diagnosis");
+    const diagnosis = await diagRes.json();
+
+    const diagCompTable = document.getElementById("diagCompTable");
+    const diagCompBody = diagCompTable.querySelector("tbody");
+    const diagCompLoading = document.getElementById("diagCompLoading");
+    const noDiagCompData = document.getElementById("noDiagCompData");
+
+    const historyTable = document.getElementById("historyTable");
+    const historyBody = historyTable.querySelector("tbody");
+    const historyLoading = document.getElementById("historyLoading");
+    const noHistoryData = document.getElementById("noHistoryData");
+
+    const treatmentList = document.getElementById("treatmentList");
+    const treatLoading = document.getElementById("treatmentLoading");
+    const noTreatmentData = document.getElementById("noTreatmentData");
+
+    if (diagnosis && diagnosis.length > 0) {
+      diagCompLoading.style.display = "none";
+      historyLoading.style.display = "none";
+      treatLoading.style.display = "none";
+
+      diagCompTable.style.display = "table";
+      historyTable.style.display = "table";
+      treatmentList.style.display = "block";
+
+      diagnosis.forEach(d => {
+        // === 🧠 Diagnosis + Chief Complaints ===
+        const diagRow = document.createElement("tr");
+
+        let diagListHTML = "";
+
+if (d["Diagnosis"]) {
+  // Smart split based on disease boundaries or newlines
+  const diagPoints = d["Diagnosis"]
+    .replace(/\s+/g, " ") // normalize extra spaces
+    .split(/(?<=DISEASE|HYPERTENSION|DIABETES MELLITUS|INJURY)\.?/i) // split after these key terms
+    .map(p => p.trim())
+    .filter(p => p.length > 2);
+
+  diagListHTML = "<ul>" + diagPoints.map(p => `<li>${p}</li>`).join("") + "</ul>";
+} else {
+  diagListHTML = "<i>No diagnosis available</i>";
+}
+
+
+        const chief = d["Chief Complaints"]?.trim() || "<i>No data</i>";
+
+        diagRow.innerHTML = `
+          <td>${diagListHTML}</td>
+          <td>${chief}</td>
+        `;
+        diagCompBody.appendChild(diagRow);
+
+        // === 📜 Present & Past History ===
+        const histRow = document.createElement("tr");
+        histRow.innerHTML = `
+          <td>${d["Present History"] || "<i>No data</i>"}</td>
+          <td>${d["Past History"] || "<i>No data</i>"}</td>
+        `;
+        historyBody.appendChild(histRow);
+
+       // === 💊 Treatment Section (smarter parsing even if no newlines) ===
+    if (d["Treatment"]) {
+  let treatmentText = d["Treatment"].replace(/\r/g, " ").replace(/\s+/g, " ").trim();
+
+  console.log("Original Treatment Text:", treatmentText); // Debug log
+
+  // Method 1: Split by newlines (most reliable for your data)
+  let treatmentItems = treatmentText.split('\n')
+    .map(t => t.trim())
+    .filter(t => t.length > 16); // Increased minimum length
+
+  console.log("After line split:", treatmentItems); // Debug log
+
+  // Method 2: If line splitting didn't work well, try medical procedure patterns
+  if (treatmentItems.length <= 1 || treatmentItems.some(item => item.split(' ').length < 3)) {
+    treatmentItems = treatmentText.split(/(?=\b(?:[A-Z]{2,}\s+[A-Z]+\s+(?:FROM|DONE|ON|SINCE|S\/P)))/)
+      .map(t => t.trim())
+      .filter(t => t.length >16);
+  }
+
+  console.log("Final treatment items:", treatmentItems); // Debug log
+
+  // Display as bullet list
+  treatmentItems.forEach((t) => {
+    const item = document.createElement("li");
+    item.textContent = t;
+    treatmentList.appendChild(item);
+  });
+} else {
+  const item = document.createElement("li");
+  item.innerHTML = "<i>No treatment data available</i>";
+  treatmentList.appendChild(item);
+}
+      });
+    } else {
+      diagCompLoading.style.display = "none";
+      historyLoading.style.display = "none";
+      treatLoading.style.display = "none";
+      noDiagCompData.style.display = "block";
+      noHistoryData.style.display = "block";
+      noTreatmentData.style.display = "block";
+    }
+
+   // =============================
+// 3️⃣ DISCHARGE CONDITION DATA
+// =============================
+ const dischargeRes = await fetch("http://127.0.0.1:8000/discharge");
+        const data = await dischargeRes.json();
+        console.log(data)
+
+        // In your case, the API returns a single dict, not an array
+        const discharges = Array.isArray(data) ? data : [data];
+
+        const dischargeList = document.getElementById("dischargeList");
+        const dischargeLoading = document.getElementById("dischargeLoading");
+        const noDischargeData = document.getElementById("noDischargeData");
+
+        if (discharges && discharges.length > 0) {
+          dischargeLoading.style.display = "none";
+          dischargeList.style.display = "block";
+
+          discharges.forEach(d => {
+
+            // 🩺 1️⃣ General summary
+            if (d["condition_summary"]) {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>General Condition:</strong> ${d["condition_summary"]}`;
+              dischargeList.appendChild(li);
+            }
+
+            // 🧩 2️⃣ Devices present
+            if (d["devices"] && Array.isArray(d["devices"]) && d["devices"].length > 0) {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>Devices / Tubes:</strong>`;
+              const ul = document.createElement("ul");
+              d["devices"].forEach(dev => {
+                const item = document.createElement("li");
+                item.textContent = dev;
+                ul.appendChild(item);
+              });
+              li.appendChild(ul);
+              dischargeList.appendChild(li);
+            }
+
+            // 💓 3️⃣ Vitals
+            if (d["vitals"]) {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>Vitals:</strong> ${d["vitals"]}`;
+              dischargeList.appendChild(li);
+            }
+           // 🧠 4️⃣ System examination (show raw backend data)
+if (d["systems"]) {
+  const li = document.createElement("li");
+
+  // If backend gives it as an object → convert to readable raw line
+  if (typeof d["systems"] === "object" && Object.keys(d["systems"]).length > 0) {
+    const sysRaw = Object.entries(d["systems"])
+      .map(([key, val]) => `${key}: ${val}`)
+      .join("; ");
+    li.innerHTML = `<strong>System Examination:</strong> ${sysRaw}`;
+  }
+  // If backend already gives a string
+  else if (typeof d["systems"] === "string") {
+    li.innerHTML = `<strong>System Examination:</strong> ${d["systems"]}`;
+  }
+
+  dischargeList.appendChild(li);
+}
+          // 💉 5️⃣ Lab results
+if (d["lab_results"]) {
+  const labs = Array.isArray(d["lab_results"]) ? d["lab_results"] : [d["lab_results"]];
+  if (labs.length > 0) {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>Lab Results:</strong>`;
+    const ul = document.createElement("ul");
+    labs.forEach(lab => {
+      const item = document.createElement("li");
+      item.textContent = `${lab.date}: ${lab.details}`;
+      ul.appendChild(item);
+    });
+    li.appendChild(ul);
+    dischargeList.appendChild(li);
+  }
+}
+
+            // 🧾 Fallback (no data)
+            if (
+              !d["condition_summary"] &&
+              (!d["devices"] || d["devices"].length === 0) &&
+              !d["vitals"] &&
+              (!d["systems"] || Object.keys(d["systems"]).length === 0) &&
+              (!d["lab_results"] || d["lab_results"].length === 0)
+            ) {
+              const li = document.createElement("li");
+              li.innerHTML = "<i>No discharge data available</i>";
+              dischargeList.appendChild(li);
+            }
+          });
+        } else {
+          dischargeLoading.style.display = "none";
+          noDischargeData.style.display = "block";
+        }
+
+ // =============================
+// 4️⃣ MEDICATION DATA
+// =============================
+const medData = await fetch("http://127.0.0.1:8000/medication");
+
+
+const loading = document.getElementById("medicationLoading");
+const noData = document.getElementById("noMedicationData");
+const container = document.getElementById("medicationContainer");
+
+loading.style.display = "none";
+
+if (!medData || Object.keys(medData[0] || {}).length === 0) {
+  noData.style.display = "block";
+  return;
+}
+
+container.style.display = "block";
+container.innerHTML = ""; // clear previous
+
+const medDict = medData[0]; // backend returns [{ ... }]
+
+Object.entries(medDict).forEach(([category, meds]) => {
+  const categoryDiv = document.createElement("div");
+  categoryDiv.classList.add("med-category");
+
+  const title = document.createElement("h4");
+  title.textContent = category;
+  title.classList.add("med-title");
+
+  const list = document.createElement("ul");
+  meds.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    list.appendChild(li);
+  });
+
+  categoryDiv.appendChild(title);
+  categoryDiv.appendChild(list);
+  container.appendChild(categoryDiv);
+});
+
+
+
+
+  }
+
+  
+  window.onload = loadData;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+[
+    {
+        "Patient Name":"PATEL MAHENDRAKUMAR KACHARABHAI,",
+        "Age\/Gender":"60Y(s) 4M(s) 24D(s)\/Male",
+        "IP No":"IPSE2526020259",
+        "UMR No":"MRSE2526029605",
+        "Admission Date":"02-09-2025 06:44",
+        "Discharge Date":"25-10-2025",
+        "Doctor Name":"DR. VIJIL RAHULAN",
+        "Ward\/Room\/Bed":"SUITE\/SUITE-12-A\/1204",
+        "Mobile No":"9510382080",
+        "Address":"H.NO: A301 SAAMARTH HEAVEN 6 KOBA",
+        "Prime Consultant":"DR. VIJIL RAHULAN",
+        "Care Team":[
+            "Dr. SANDEEP ATTAWAR (CARDIOVASCULAR)",
+            "Dr PRABHAT DUTTA HOD Anesthesia"
+        ]
+    }
+]
