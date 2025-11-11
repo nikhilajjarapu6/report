@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FRONTEND_PATH = r"D:\Nikhil\python\report_analysis\frontend\index.html"
+FRONTEND_PATH = r"D:\Nikhil\python\report_analysis\index.html"
 PDF_PATH = r"D:\Nikhil\python\report_analysis\data\raw\KIMS _ EHR (19).pdf"
 
 
@@ -93,3 +93,4 @@ def get_medication():
     if medication_json:
         return JSONResponse(content=medication_json, status_code=200)
     return JSONResponse(content={"error": "Medication data not available"}, status_code=404)
+
